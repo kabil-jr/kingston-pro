@@ -266,6 +266,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
       </div>
       <button class="btn-login" id="btn-login" onclick="doLogin()">Sign In →</button>
       <button class="login-back" onclick="showScreen('landing')">← Back to portal selection</button>
+      <div style="font-size:11px;color:var(--ink3);text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">Contact your admin for login credentials</div>
 
     </div>
   </div>
@@ -274,6 +275,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 <!-- ════════ ADMIN PORTAL ════════ -->
 <div id="admin-portal" class="screen">
   <nav class="shell-nav">
+    <button class="nav-back" onclick="doLogout()">← Home</button>
     <span class="nav-brand">KEC Assign</span>
     <span style="flex:1"></span>
     <span class="nav-role adm" style="margin-right:10px">Admin</span>
@@ -337,7 +339,10 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
       </div>
       <div class="field">
         <label>Due Date &amp; Time *</label>
-        <input type="datetime-local" id="f-due" oninput="validateForm()">
+        <div style="display:flex;gap:10px;">
+          <input type="date" id="f-date" oninput="validateForm()" style="flex:1;font-family:var(--sans);font-size:14px;padding:10px 13px;border-radius:var(--r);border:1px solid var(--border);background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px rgba(26,58,92,.1)'" onblur="this.style.borderColor='';this.style.boxShadow=''">
+          <input type="time" id="f-time" oninput="validateForm()" style="width:130px;font-family:var(--sans);font-size:14px;padding:10px 13px;border-radius:var(--r);border:1px solid var(--border);background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px rgba(26,58,92,.1)'" onblur="this.style.borderColor='';this.style.boxShadow=''">
+        </div>
       </div>
       <div class="field">
         <label>Handwritten Answer PDF</label>
@@ -381,8 +386,9 @@ let pollTimer   = null;
 // ═══════════════════════════════════════════════════════════
 function escHtml(s){ if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function formatBytes(b){ if(b<1024)return b+' B'; if(b<1024*1024)return(b/1024).toFixed(1)+' KB'; return(b/(1024*1024)).toFixed(1)+' MB'; }
-function daysLeft(due){ return Math.ceil((new Date(due)-Date.now())/(864e5)); }
-function formatDate(str){ const d=new Date(str); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+function parseDue(str){ return new Date(str.length===16 ? str+':00' : str); } // fix 'YYYY-MM-DDTHH:MM' missing seconds
+function daysLeft(due){ return Math.ceil((parseDue(due)-Date.now())/(864e5)); }
+function formatDate(str){ const d=parseDue(str); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
 function dueStatus(due){ const d=daysLeft(due); return d<0?'over':d<=3?'soon':'ok'; }
 function dueLabel(due){ const d=daysLeft(due); if(d<0)return`Overdue by ${Math.abs(d)} day${Math.abs(d)===1?'':'s'}`; if(d===0)return'Due today'; if(d===1)return'Due tomorrow'; return`${d} days left`; }
 function statusBarColor(st){ return st==='over'?'var(--danger)':st==='soon'?'var(--warn)':'var(--ok)'; }
@@ -578,7 +584,7 @@ function renderStudent(assignments){
 function openForm(){ document.getElementById('form-overlay').classList.add('open'); document.getElementById('f-title').focus(); }
 function closeForm(){ document.getElementById('form-overlay').classList.remove('open'); resetForm(); }
 function resetForm(){
-  ['f-title','f-course','f-desc','f-due'].forEach(id=>document.getElementById(id).value='');
+  ['f-title','f-course','f-desc','f-date','f-time'].forEach(id=>document.getElementById(id).value='');
   removeFile();
   const btn=document.getElementById('btn-submit');
   btn.disabled=true; btn.textContent='Post Assignment';
@@ -586,8 +592,9 @@ function resetForm(){
 function validateForm(){
   const t=document.getElementById('f-title').value.trim();
   const c=document.getElementById('f-course').value.trim();
-  const d=document.getElementById('f-due').value;
-  document.getElementById('btn-submit').disabled=!(t&&c&&d);
+  const d=document.getElementById('f-date').value;
+  const tm=document.getElementById('f-time').value;
+  document.getElementById('btn-submit').disabled=!(t&&c&&d&&tm);
 }
 
 function handleFile(e){
@@ -613,7 +620,9 @@ async function createAssignment(){
   const title  = document.getElementById('f-title').value.trim();
   const course = document.getElementById('f-course').value.trim();
   const desc   = document.getElementById('f-desc').value.trim();
-  const due    = document.getElementById('f-due').value;
+  const date   = document.getElementById('f-date').value;
+  const time   = document.getElementById('f-time').value;
+  const due    = date && time ? `${date}T${time}:00` : '';
   if(!title||!course||!due) return;
 
   const btn=document.getElementById('btn-submit');
@@ -695,14 +704,16 @@ uz.addEventListener('drop',e=>{
 });
 
 // ═══════════════════════════════════════════════════════════
-// SESSION CHECK on page load
+// SESSION CHECK on page load — auto-restore admin session
 // ═══════════════════════════════════════════════════════════
 (async function checkSession(){
   try {
-    const res  = await fetch('/api/me');
+    const res  = await fetch('/api/me', {credentials:'same-origin'});
     const data = await res.json();
-    // If already logged in and somehow on the login screen, stay on landing
-    // (session is restored automatically by cookie on next admin-portal visit)
+    if(data.loggedIn){
+      // Admin already logged in — go straight to admin portal
+      showScreen('admin-portal');
+    }
   } catch{}
 })();
 </script>
