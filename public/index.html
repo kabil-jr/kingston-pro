@@ -428,6 +428,7 @@ async function doLogin(){
     const res  = await fetch('/api/login', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
+      credentials: 'same-origin',
       body: JSON.stringify({username, password})
     });
     const data = await res.json();
@@ -451,7 +452,7 @@ async function doLogin(){
 }
 
 async function doLogout(){
-  try { await fetch('/api/logout', {method:'POST'}); } catch{}
+  try { await fetch('/api/logout', {method:'POST', credentials:'same-origin'}); } catch{}
   clearInterval(pollTimer); pollTimer=null;
   showScreen('landing');
   showToast('Signed out successfully');
@@ -461,7 +462,7 @@ async function doLogout(){
 // FETCH ASSIGNMENTS
 // ═══════════════════════════════════════════════════════════
 async function fetchAssignments(){
-  const res  = await fetch('/api/assignments');
+  const res = await fetch('/api/assignments', { credentials: 'same-origin' });
   if(!res.ok) throw new Error('Failed to load assignments');
   return res.json();
 }
@@ -634,11 +635,15 @@ async function createAssignment(){
 
     const res = await fetch('/api/assignments', {
       method: 'POST',
+      credentials: 'same-origin',
       body:   formData
     });
 
     if(pendingFile){ bar.style.width='100%'; }
 
+    if(res.status === 401){
+      throw new Error('Session expired — please sign in again.');
+    }
     const data = await res.json();
     if(!res.ok) throw new Error(data.error || 'Failed to post assignment');
 
@@ -647,6 +652,9 @@ async function createAssignment(){
     loadAdmin();
   } catch(e){
     showToast('❌ ' + (e.message || 'Failed to post assignment'));
+    if(e.message && e.message.includes('sign in')){
+      setTimeout(()=>showScreen('admin-login'), 1500);
+    }
     btn.disabled=false;
     btn.textContent='Post Assignment';
     document.getElementById('upload-progress').classList.remove('visible');
@@ -660,7 +668,11 @@ async function createAssignment(){
 async function deleteAssignment(id){
   if(!confirm('Delete this assignment? Students will no longer see it.')) return;
   try {
-    const res = await fetch(`/api/assignments/${id}`, {method:'DELETE'});
+    const res = await fetch(`/api/assignments/${id}`, {
+      method:'DELETE',
+      credentials: 'same-origin'
+    });
+    if(res.status === 401){ showToast('❌ Session expired — please sign in again'); setTimeout(()=>showScreen('admin-login'),1500); return; }
     const data = await res.json();
     if(!res.ok) throw new Error(data.error || 'Delete failed');
     showToast('🗑 Assignment deleted');

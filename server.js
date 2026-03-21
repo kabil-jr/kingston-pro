@@ -60,10 +60,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'kec-portal-secret-2024',
-  resave: false,
+  resave: true,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
+    secure: false,
+    sameSite: 'lax',
     maxAge: 8 * 60 * 60 * 1000   // 8 hours
   }
 }));
@@ -93,9 +95,16 @@ app.post('/api/login', (req, res) => {
   if (username !== ADMIN_USERNAME || !bcrypt.compareSync(password, ADMIN_HASH))
     return res.status(401).json({ error: 'Incorrect username or password.' });
 
-  req.session.isAdmin = true;
-  req.session.username = username;
-  res.json({ success: true, username });
+  // Regenerate session to prevent fixation, then save
+  req.session.regenerate((err) => {
+    if (err) return res.status(500).json({ error: 'Session error.' });
+    req.session.isAdmin = true;
+    req.session.username = username;
+    req.session.save((err2) => {
+      if (err2) return res.status(500).json({ error: 'Session save error.' });
+      res.json({ success: true, username });
+    });
+  });
 });
 
 app.post('/api/logout', (req, res) => {
@@ -153,18 +162,24 @@ app.post('/api/assignments', requireAdmin, upload.single('pdf'), (req, res) => {
 });
 
 app.delete('/api/assignments/:id', requireAdmin, (req, res) => {
-  const id   = parseInt(req.params.id, 10);
-  let   list = loadAssignments();
-  const asgn = list.find(a => a.id === id);
+  const idNum = parseInt(req.params.id, 10);
+  const idStr = req.params.id;
+  let   list  = loadAssignments();
+  // Match by number OR string to handle any JSON type mismatch
+  const asgn  = list.find(a => a.id === idNum || String(a.id) === idStr);
   if (!asgn) return res.status(404).json({ error: 'Assignment not found.' });
 
   // Delete the uploaded PDF file if present
   if (asgn.storedFilename) {
-    const filePath = path.join(UPLOADS_DIR, asgn.storedFilename);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    try {
+      const filePath = path.join(UPLOADS_DIR, asgn.storedFilename);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    } catch (e) {
+      console.error('Could not delete file:', e.message);
+    }
   }
 
-  list = list.filter(a => a.id !== id);
+  list = list.filter(a => a.id !== idNum && String(a.id) !== idStr);
   saveAssignments(list);
   res.json({ success: true });
 });
