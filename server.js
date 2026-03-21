@@ -5,46 +5,59 @@ const bcrypt  = require('bcryptjs');
 const path    = require('path');
 const fs      = require('fs');
 
-const app = express();
+const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ─── Paths ──────────────────────────────────────────────────────────────────
-const DATA_FILE    = path.join(__dirname, 'data', 'assignments.json');
-const UPLOADS_DIR  = path.join(__dirname, 'uploads');
+// ─── Paths ───────────────────────────────────────────────────────────────────
+// On Vercel, only /tmp is writable. Project dir is read-only.
+const IS_VERCEL    = !!process.env.VERCEL;
+const TMP_DIR      = IS_VERCEL ? '/tmp' : __dirname;
+const DATA_FILE    = path.join(TMP_DIR,  'data', 'assignments.json');
+const UPLOADS_DIR  = path.join(TMP_DIR,  'uploads');
 const PUBLIC_DIR   = path.join(__dirname, 'public');
 
-// Ensure directories exist
-[path.join(__dirname, 'data'), UPLOADS_DIR, PUBLIC_DIR].forEach(d => {
+// Ensure writable directories exist
+[path.join(TMP_DIR, 'data'), UPLOADS_DIR].forEach(d => {
   if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
 });
 
-// ─── Admin credentials (hashed at startup) ──────────────────────────────────
-// Default: admin / kec123  — change ADMIN_PASS env var to override
+// On Vercel first boot: seed data from the committed assignments.json if present
+const SEED_FILE = path.join(__dirname, 'data', 'assignments.json');
+if (IS_VERCEL && !fs.existsSync(DATA_FILE) && fs.existsSync(SEED_FILE)) {
+  try { fs.copyFileSync(SEED_FILE, DATA_FILE); } catch {}
+}
+
+// ─── Admin credentials ───────────────────────────────────────────────────────
 const ADMIN_USERNAME = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS_RAW = process.env.ADMIN_PASS || 'kec123';
 const ADMIN_HASH     = bcrypt.hashSync(ADMIN_PASS_RAW, 10);
 
-// ─── Data helpers ────────────────────────────────────────────────────────────
+// ─── Data helpers ─────────────────────────────────────────────────────────────
 function loadAssignments() {
   if (!fs.existsSync(DATA_FILE)) return [];
   try { return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); }
   catch { return []; }
 }
 function saveAssignments(list) {
+  const dir = path.dirname(DATA_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(DATA_FILE, JSON.stringify(list, null, 2));
 }
 
-// ─── Multer (PDF uploads) ────────────────────────────────────────────────────
+// ─── Multer ───────────────────────────────────────────────────────────────────
 const storage = multer.diskStorage({
-  destination: (_, __, cb) => cb(null, UPLOADS_DIR),
-  filename:    (_, file, cb) => {
+  destination: (_, __, cb) => {
+    if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    cb(null, UPLOADS_DIR);
+  },
+  filename: (_, file, cb) => {
     const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     cb(null, unique + path.extname(file.originalname));
   }
 });
 const upload = multer({
   storage,
-  limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB
+  limits: { fileSize: 20 * 1024 * 1024 },
   fileFilter: (_, file, cb) => {
     if (file.mimetype === 'application/pdf' || file.originalname.endsWith('.pdf')) {
       cb(null, true);
@@ -64,13 +77,13 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
-    maxAge: 8 * 60 * 60 * 1000   // 8 hours
+    secure: IS_VERCEL,       // HTTPS on Vercel, HTTP locally
+    sameSite: IS_VERCEL ? 'none' : 'lax',
+    maxAge: 8 * 60 * 60 * 1000
   }
 }));
 
-// Serve uploaded PDFs (protected — only if file exists)
+// Serve uploaded PDFs
 app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Serve the frontend
@@ -95,10 +108,9 @@ app.post('/api/login', (req, res) => {
   if (username !== ADMIN_USERNAME || !bcrypt.compareSync(password, ADMIN_HASH))
     return res.status(401).json({ error: 'Incorrect username or password.' });
 
-  // Regenerate session to prevent fixation, then save
   req.session.regenerate((err) => {
     if (err) return res.status(500).json({ error: 'Session error.' });
-    req.session.isAdmin = true;
+    req.session.isAdmin  = true;
     req.session.username = username;
     req.session.save((err2) => {
       if (err2) return res.status(500).json({ error: 'Session save error.' });
@@ -120,7 +132,6 @@ app.get('/api/me', (req, res) => {
 // ── Assignments (public read) ─────────────────────────────────────────────────
 app.get('/api/assignments', (req, res) => {
   const list = loadAssignments();
-  // Strip server-only fields from public response
   const safe = list.map(({ storedFilename, ...rest }) => rest);
   res.json(safe);
 });
@@ -136,14 +147,14 @@ app.post('/api/assignments', requireAdmin, upload.single('pdf'), (req, res) => {
 
   const assignment = {
     id,
-    title: title.trim(),
+    title:  title.trim(),
     course: course.trim(),
-    desc: (desc || '').trim(),
+    desc:   (desc || '').trim(),
     due,
-    createdAt: new Date().toISOString(),
-    pdfName: null,
-    pdfSize: null,
-    pdfUrl: null,
+    createdAt:      new Date().toISOString(),
+    pdfName:        null,
+    pdfSize:        null,
+    pdfUrl:         null,
     storedFilename: null
   };
 
@@ -161,15 +172,14 @@ app.post('/api/assignments', requireAdmin, upload.single('pdf'), (req, res) => {
   res.status(201).json(safe);
 });
 
+// ── Delete Assignment ─────────────────────────────────────────────────────────
 app.delete('/api/assignments/:id', requireAdmin, (req, res) => {
   const idNum = parseInt(req.params.id, 10);
   const idStr = req.params.id;
   let   list  = loadAssignments();
-  // Match by number OR string to handle any JSON type mismatch
   const asgn  = list.find(a => a.id === idNum || String(a.id) === idStr);
   if (!asgn) return res.status(404).json({ error: 'Assignment not found.' });
 
-  // Delete the uploaded PDF file if present
   if (asgn.storedFilename) {
     try {
       const filePath = path.join(UPLOADS_DIR, asgn.storedFilename);
@@ -184,7 +194,7 @@ app.delete('/api/assignments/:id', requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
-// ─── 404 → serve index.html (SPA fallback) ───────────────────────────────────
+// ─── SPA fallback ────────────────────────────────────────────────────────────
 app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
@@ -197,12 +207,17 @@ app.use((err, req, res, _next) => {
   res.status(500).json({ error: err.message || 'Internal server error.' });
 });
 
-// ─── Start ────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🟢  KEC Assign Portal running at http://localhost:${PORT}`);
-  console.log(`    Admin login → username: ${ADMIN_USERNAME}  password: ${ADMIN_PASS_RAW}`);
-  console.log('    Press Ctrl+C to stop.\n');
-});
+// ─── Start (local only) ───────────────────────────────────────────────────────
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🟢  KEC Assign Portal → http://localhost:${PORT}`);
+    console.log(`    Admin: ${ADMIN_USERNAME} / ${ADMIN_PASS_RAW}`);
+    console.log('    Press Ctrl+C to stop.\n');
+  });
+}
+
+// Export for Vercel serverless
+module.exports = app;
 
 // ─── Util ─────────────────────────────────────────────────────────────────────
 function formatBytes(b) {
