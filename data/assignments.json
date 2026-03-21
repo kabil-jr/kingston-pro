@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 1774078557310,
+    "title": "Debug Test",
+    "course": "TEST101",
+    "desc": "Testing...",
+    "due": "1000-02-02T01:00",
+    "createdAt": "2026-03-21T07:35:57.310Z",
+    "pdfName": null,
+    "pdfSize": null,
+    "pdfUrl": null,
+    "storedFilename": null
+  }
+]
