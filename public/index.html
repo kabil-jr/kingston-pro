@@ -7,6 +7,7 @@
 <meta name="description" content="KEC Assignment Portal — post assignments with answer PDFs, students view and download instantly.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -31,14 +32,10 @@
   --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
 }
 html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(--ink);}
-
-/* ── SCREEN SYSTEM ── */
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;flex-direction:column;}
 
-/* ══════════════════════════════
-   LANDING
-══════════════════════════════ */
+/* ── LANDING ── */
 #landing{align-items:center;justify-content:center;background:var(--paper);position:relative;overflow:hidden;}
 .land-bg{position:absolute;inset:0;background:
   radial-gradient(ellipse 60% 40% at 20% 80%,rgba(26,58,92,.06) 0%,transparent 60%),
@@ -67,9 +64,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .p-card.adm:hover .p-arrow{color:var(--accent);}
 .p-card.stu:hover .p-arrow{color:var(--gold);}
 
-/* ══════════════════════════════
-   SHELL (shared nav)
-══════════════════════════════ */
+/* ── SHELL ── */
 .shell-nav{display:flex;align-items:center;gap:12px;padding:0 20px;height:54px;background:var(--paper);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
 .nav-back{cursor:pointer;font-size:13px;color:var(--ink3);background:none;border:none;font-family:var(--sans);display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:6px;transition:background .15s,color .15s;}
 .nav-back:hover{background:var(--paper2);color:var(--ink);}
@@ -78,10 +73,10 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .nav-role.adm{background:#e8eef5;color:var(--accent);}
 .nav-role.stu{background:#fdf4e7;color:var(--gold);}
 .shell-body{flex:1;overflow-y:auto;}
+.btn-logout{font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;font-family:var(--sans);transition:background .15s,color .15s;}
+.btn-logout:hover{background:var(--paper2);color:var(--ink);}
 
-/* ══════════════════════════════
-   ADMIN PORTAL
-══════════════════════════════ */
+/* ── ADMIN PORTAL ── */
 #admin-portal .shell-body{background:var(--paper2);}
 .adm-main{max-width:700px;margin:0 auto;padding:28px 20px;}
 .adm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
@@ -103,7 +98,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .chip.due{background:#fef3c7;color:#92400e;}
 .chip.over{background:#fee2e2;color:#991b1b;}
 .chip.safe{background:#dcfce7;color:#166534;}
-.chip.pdf{background:#ede9fe;color:#5b21b6;cursor:pointer;}
+.chip.pdf{background:#ede9fe;color:#5b21b6;text-decoration:none;}
 .chip-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
 .asgn-actions{margin-left:auto;display:flex;gap:7px;}
 .btn-sm{font-size:12px;font-weight:500;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--paper);color:var(--ink);cursor:pointer;font-family:var(--sans);transition:background .15s;}
@@ -115,9 +110,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .empty-state h3{font-size:16px;font-weight:600;color:var(--ink2);margin-bottom:6px;}
 .empty-state p{font-size:13px;line-height:1.6;}
 
-/* ══════════════════════════════
-   CREATE FORM (slide-in panel)
-══════════════════════════════ */
+/* ── FORM PANEL ── */
 .form-overlay{display:none;position:fixed;inset:0;z-index:100;}
 .form-overlay.open{display:flex;}
 .form-backdrop{position:absolute;inset:0;background:rgba(15,14,13,.5);animation:fadeIn .2s ease;}
@@ -132,8 +125,8 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .form-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;}
 .field{margin-bottom:20px;}
 .field label{display:block;font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase;}
-.field input,.field select,.field textarea{width:100%;font-family:var(--sans);font-size:14px;padding:10px 13px;border-radius:var(--r);border:1px solid var(--border);background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,58,92,.1);}
+.field input,.field textarea{width:100%;font-family:var(--sans);font-size:14px;padding:10px 13px;border-radius:var(--r);border:1px solid var(--border);background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;}
+.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,58,92,.1);}
 .field textarea{resize:vertical;min-height:80px;line-height:1.5;}
 .upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;}
 .upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:#f0f4f9;}
@@ -145,9 +138,12 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .upload-preview.visible{display:flex;}
 .pdf-icon{width:36px;height:36px;background:#ede9fe;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .upload-name{font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.upload-size{font-size:11px;color:var(--ink3);}
+.upload-size-txt{font-size:11px;color:var(--ink3);}
 .remove-file{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;padding:2px 4px;border-radius:4px;}
 .remove-file:hover{color:var(--danger);background:#fee2e2;}
+.upload-progress{height:4px;background:var(--paper3);border-radius:2px;margin-top:8px;overflow:hidden;display:none;}
+.upload-progress.visible{display:block;}
+.upload-progress-bar{height:100%;background:var(--accent);border-radius:2px;transition:width .3s;}
 .btn-cancel{flex:1;padding:11px;font-size:14px;font-weight:500;border-radius:var(--r);border:1px solid var(--border);background:var(--paper);color:var(--ink);cursor:pointer;font-family:var(--sans);transition:background .15s;}
 .btn-cancel:hover{background:var(--paper2);}
 .btn-submit{flex:2;padding:11px;font-size:14px;font-weight:600;border-radius:var(--r);border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:var(--sans);transition:background .2s,transform .15s;}
@@ -155,17 +151,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .btn-submit:active{transform:scale(.98);}
 .btn-submit:disabled{opacity:.5;cursor:not-allowed;}
 
-/* Spinner inside button */
-.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px;}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:30px;font-size:13px;font-weight:500;z-index:200;transition:transform .3s,opacity .3s;opacity:0;white-space:nowrap;}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-
-/* ══════════════════════════════
-   STUDENT PORTAL
-══════════════════════════════ */
+/* ── STUDENT PORTAL ── */
 #student-portal .shell-body{background:var(--paper2);}
 .stu-main{max-width:700px;margin:0 auto;padding:28px 20px;}
 .stu-header{margin-bottom:24px;}
@@ -187,17 +173,13 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .stu-card-footer{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .btn-download{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:9px 18px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,transform .15s;text-decoration:none;}
 .btn-download:hover{background:var(--accent2);transform:translateY(-1px);}
-.btn-download:active{transform:scale(.98);}
 .no-pdf-note{font-size:12px;color:var(--ink3);font-style:italic;}
 .status-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;}
 .sb-over{background:#fee2e2;color:#991b1b;}
 .sb-soon{background:#fef3c7;color:#92400e;}
 .sb-ok{background:#dcfce7;color:#166534;}
-.countdown{font-size:12px;color:var(--ink3);margin-left:auto;}
 
-/* ══════════════════════════════
-   ADMIN LOGIN
-══════════════════════════════ */
+/* ── ADMIN LOGIN ── */
 #admin-login{align-items:center;justify-content:center;background:var(--paper);position:relative;overflow:hidden;}
 .login-box{position:relative;z-index:1;background:var(--paper);border:1px solid var(--border);border-radius:var(--r2);padding:36px 32px;width:100%;max-width:380px;box-shadow:var(--shadow);}
 .login-logo{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
@@ -217,16 +199,20 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 .btn-login:disabled{opacity:.6;cursor:not-allowed;}
 .login-back{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--ink3);cursor:pointer;background:none;border:none;font-family:var(--sans);width:100%;}
 .login-back:hover{color:var(--ink);}
-.btn-logout{font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;font-family:var(--sans);transition:background .15s,color .15s;}
-.btn-logout:hover{background:var(--paper2);color:var(--ink);}
+.login-hint{font-size:11px;color:var(--ink3);text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);line-height:1.6;}
 
-/* Skeleton loader */
+/* ── SKELETON ── */
 .skeleton{background:linear-gradient(90deg,var(--paper2) 25%,var(--paper3) 50%,var(--paper2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--r);height:100px;margin-bottom:12px;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* ══════════════════════════════
-   RESPONSIVE
-══════════════════════════════ */
+/* ── SPINNER ── */
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:30px;font-size:13px;font-weight:500;z-index:200;transition:transform .3s,opacity .3s;opacity:0;white-space:nowrap;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
 @media(max-width:520px){
   .portal-grid{grid-template-columns:1fr;}
   .form-panel{max-width:100%;}
@@ -237,34 +223,23 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
 </head>
 <body>
 
-<!-- ════════════════════════════════
-     LANDING PAGE
-════════════════════════════════ -->
+<!-- ════════ LANDING ════════ -->
 <div id="landing" class="screen active">
   <div class="land-bg"></div>
   <div class="land-inner">
     <div>
-      <div class="land-logo">
-        <span>KEC Assign</span>
-        <sub>Portal</sub>
-      </div>
+      <div class="land-logo"><span>KEC Assign</span><sub>Portal</sub></div>
       <p class="land-tagline">A unified assignment portal for KEC — post assignments with answer PDFs, students view and download instantly.</p>
     </div>
     <div class="portal-grid">
-      <div class="p-card adm" id="card-admin" onclick="showScreen('admin-login')">
+      <div class="p-card adm" onclick="showScreen('admin-login')">
         <div class="p-ico adm">🧑‍🏫</div>
-        <div>
-          <h2>Admin Portal</h2>
-          <p>Create assignments, attach answer PDFs, set due dates</p>
-        </div>
+        <div><h2>Admin Portal</h2><p>Create assignments, attach answer PDFs, set due dates</p></div>
         <span class="p-arrow">↗</span>
       </div>
-      <div class="p-card stu" id="card-student" onclick="showScreen('student-portal')">
+      <div class="p-card stu" onclick="showScreen('student-portal')">
         <div class="p-ico stu">🎒</div>
-        <div>
-          <h2>Student Portal</h2>
-          <p>View assignments &amp; download answer sheets posted by admin</p>
-        </div>
+        <div><h2>Student Portal</h2><p>View assignments &amp; download answer sheets posted by admin</p></div>
         <span class="p-arrow">↗</span>
       </div>
     </div>
@@ -272,20 +247,15 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
   </div>
 </div>
 
-<!-- ════════════════════════════════
-     ADMIN LOGIN
-════════════════════════════════ -->
+<!-- ════════ ADMIN LOGIN ════════ -->
 <div id="admin-login" class="screen">
   <div class="land-bg"></div>
   <div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;">
     <div class="login-box">
-      <div class="login-logo">
-        <span>KEC Assign</span>
-        <sub>Portal</sub>
-      </div>
+      <div class="login-logo"><span>KEC Assign</span><sub>Portal</sub></div>
       <h2>Admin Sign In</h2>
       <p class="login-sub">Enter your credentials to access the admin portal.</p>
-      <div class="login-error" id="login-error">Incorrect username or password. Please try again.</div>
+      <div class="login-error" id="login-error">Incorrect username or password.</div>
       <div class="login-field">
         <label>Username</label>
         <input type="text" id="login-user" placeholder="Enter username" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
@@ -296,13 +266,12 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
       </div>
       <button class="btn-login" id="btn-login" onclick="doLogin()">Sign In →</button>
       <button class="login-back" onclick="showScreen('landing')">← Back to portal selection</button>
+      <p class="login-hint">Default: <strong>admin</strong> / <strong>kec123</strong></p>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════
-     ADMIN PORTAL
-════════════════════════════════ -->
+<!-- ════════ ADMIN PORTAL ════════ -->
 <div id="admin-portal" class="screen">
   <nav class="shell-nav">
     <span class="nav-brand">KEC Assign</span>
@@ -327,9 +296,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
   </div>
 </div>
 
-<!-- ════════════════════════════════
-     STUDENT PORTAL
-════════════════════════════════ -->
+<!-- ════════ STUDENT PORTAL ════════ -->
 <div id="student-portal" class="screen">
   <nav class="shell-nav">
     <button class="nav-back" onclick="showScreen('landing')">← Back</button>
@@ -347,9 +314,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
   </div>
 </div>
 
-<!-- ════════════════════════════════
-     CREATE ASSIGNMENT FORM
-════════════════════════════════ -->
+<!-- ════════ CREATE FORM ════════ -->
 <div class="form-overlay" id="form-overlay">
   <div class="form-backdrop" onclick="closeForm()"></div>
   <div class="form-panel">
@@ -368,7 +333,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
       </div>
       <div class="field">
         <label>Description / Instructions</label>
-        <textarea id="f-desc" placeholder="Describe what students need to do, reference chapters, exam notes…"></textarea>
+        <textarea id="f-desc" placeholder="Describe what students need to do…"></textarea>
       </div>
       <div class="field">
         <label>Due Date &amp; Time *</label>
@@ -386,9 +351,12 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
           <div class="pdf-icon">📋</div>
           <div style="flex:1;overflow:hidden;">
             <div class="upload-name" id="upload-name"></div>
-            <div class="upload-size" id="upload-size"></div>
+            <div class="upload-size-txt" id="upload-size-txt"></div>
           </div>
-          <button class="remove-file" onclick="removeFile()" title="Remove">✕</button>
+          <button class="remove-file" onclick="removeFile()">✕</button>
+        </div>
+        <div class="upload-progress" id="upload-progress">
+          <div class="upload-progress-bar" id="upload-progress-bar" style="width:0%"></div>
         </div>
       </div>
     </div>
@@ -399,168 +367,128 @@ html,body{height:100%;font-family:var(--sans);background:var(--paper);color:var(
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 let pendingFile = null;
+let pollTimer   = null;
 
-// ═══════════════════════════════════
-// API HELPERS
-// ═══════════════════════════════════
-async function api(method, url, body) {
-  const opts = { method, credentials: 'same-origin' };
-  if (body instanceof FormData) {
-    opts.body = body;
-  } else if (body) {
-    opts.headers = { 'Content-Type': 'application/json' };
-    opts.body = JSON.stringify(body);
-  }
-  const res = await fetch(url, opts);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-  return data;
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════
+function escHtml(s){ if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatBytes(b){ if(b<1024)return b+' B'; if(b<1024*1024)return(b/1024).toFixed(1)+' KB'; return(b/(1024*1024)).toFixed(1)+' MB'; }
+function daysLeft(due){ return Math.ceil((new Date(due)-Date.now())/(864e5)); }
+function formatDate(str){ const d=new Date(str); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+function dueStatus(due){ const d=daysLeft(due); return d<0?'over':d<=3?'soon':'ok'; }
+function dueLabel(due){ const d=daysLeft(due); if(d<0)return`Overdue by ${Math.abs(d)} day${Math.abs(d)===1?'':'s'}`; if(d===0)return'Due today'; if(d===1)return'Due tomorrow'; return`${d} days left`; }
+function statusBarColor(st){ return st==='over'?'var(--danger)':st==='soon'?'var(--warn)':'var(--ok)'; }
+function chipClass(st){ return st==='over'?'chip over':st==='soon'?'chip due':'chip safe'; }
+
+function showToast(msg, dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'), dur);
 }
 
-// ═══════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// SCREEN ROUTING
+// ═══════════════════════════════════════════════════════════
+function showScreen(id){
+  // Stop polling when leaving a portal
+  clearInterval(pollTimer); pollTimer=null;
+
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  if(id==='admin-portal')  { loadAdmin();  pollTimer=setInterval(loadAdmin,  15000); }
+  if(id==='student-portal'){ loadStudent(); pollTimer=setInterval(loadStudent,15000); }
+  if(id==='admin-login')   { setTimeout(()=>document.getElementById('login-user').focus(),100); }
+}
+
+// ═══════════════════════════════════════════════════════════
 // AUTH
-// ═══════════════════════════════════
-async function checkSession() {
-  try {
-    const data = await api('GET', '/api/me');
-    if (data.loggedIn) {
-      // Admin was already logged in — go straight to portal
-      // (only if we're coming from a fresh page load on admin-login)
-    }
-  } catch {}
-}
+// ═══════════════════════════════════════════════════════════
+async function doLogin(){
+  const username = document.getElementById('login-user').value.trim();
+  const password = document.getElementById('login-pass').value;
+  const err      = document.getElementById('login-error');
+  const btn      = document.getElementById('btn-login');
+  if(!username||!password){ err.textContent='Please enter username and password.'; err.classList.add('show'); return; }
 
-async function doLogin() {
-  const u = document.getElementById('login-user').value.trim();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-error');
-  const btn = document.getElementById('btn-login');
-
-  if (!u || !p) { err.textContent = 'Please enter both username and password.'; err.classList.add('show'); return; }
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span>Signing in…';
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin"></span>Signing in…';
   err.classList.remove('show');
 
   try {
-    await api('POST', '/api/login', { username: u, password: p });
-    btn.innerHTML = 'Sign In →';
-    btn.disabled = false;
-    document.getElementById('login-user').value = '';
-    document.getElementById('login-pass').value = '';
-    showScreen('admin-portal');
-  } catch (e) {
-    err.textContent = e.message || 'Incorrect username or password.';
+    const res  = await fetch('/api/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({username, password})
+    });
+    const data = await res.json();
+    if(res.ok){
+      btn.innerHTML='Sign In →'; btn.disabled=false;
+      document.getElementById('login-user').value='';
+      document.getElementById('login-pass').value='';
+      showScreen('admin-portal');
+    } else {
+      err.textContent = data.error || 'Incorrect username or password.';
+      err.classList.add('show');
+      document.getElementById('login-pass').value='';
+      document.getElementById('login-pass').focus();
+      btn.innerHTML='Sign In →'; btn.disabled=false;
+    }
+  } catch(e){
+    err.textContent='Network error. Is the server running?';
     err.classList.add('show');
-    document.getElementById('login-pass').value = '';
-    document.getElementById('login-pass').focus();
-    btn.innerHTML = 'Sign In →';
-    btn.disabled = false;
+    btn.innerHTML='Sign In →'; btn.disabled=false;
   }
 }
 
-async function doLogout() {
-  try { await api('POST', '/api/logout'); } catch {}
+async function doLogout(){
+  try { await fetch('/api/logout', {method:'POST'}); } catch{}
+  clearInterval(pollTimer); pollTimer=null;
   showScreen('landing');
   showToast('Signed out successfully');
 }
 
-// ═══════════════════════════════════
-// SCREEN ROUTING
-// ═══════════════════════════════════
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if (id === 'admin-portal') loadAndRenderAdmin();
-  if (id === 'student-portal') loadAndRenderStudent();
-  if (id === 'admin-login') {
-    setTimeout(() => document.getElementById('login-user').focus(), 100);
-  }
+// ═══════════════════════════════════════════════════════════
+// FETCH ASSIGNMENTS
+// ═══════════════════════════════════════════════════════════
+async function fetchAssignments(){
+  const res  = await fetch('/api/assignments');
+  if(!res.ok) throw new Error('Failed to load assignments');
+  return res.json();
 }
 
-// ═══════════════════════════════════
-// UTILITIES
-// ═══════════════════════════════════
-function parseDue(str){ return new Date(str); }
-function daysLeft(due){ return Math.ceil((parseDue(due) - Date.now()) / (1000*60*60*24)); }
-function formatDate(str){
-  const d = parseDue(str);
-  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-}
-function dueStatus(due){
-  const d = daysLeft(due);
-  if(d<0) return 'over';
-  if(d<=3) return 'soon';
-  return 'ok';
-}
-function dueLabel(due){
-  const d = daysLeft(due);
-  if(d<0) return `Overdue by ${Math.abs(d)} day${Math.abs(d)===1?'':'s'}`;
-  if(d===0) return 'Due today';
-  if(d===1) return 'Due tomorrow';
-  return `${d} days left`;
-}
-function statusBarColor(st){
-  if(st==='over') return 'var(--danger)';
-  if(st==='soon') return 'var(--warn)';
-  return 'var(--ok)';
-}
-function chipClass(st){
-  if(st==='over') return 'chip over';
-  if(st==='soon') return 'chip due';
-  return 'chip safe';
-}
-function showToast(msg, dur=2800){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), dur);
-}
-function escHtml(str){
-  if(!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function formatBytes(b){
-  if(b<1024) return b+' B';
-  if(b<1024*1024) return (b/1024).toFixed(1)+' KB';
-  return (b/(1024*1024)).toFixed(1)+' MB';
-}
-
-// ═══════════════════════════════════
-// RENDER ADMIN LIST
-// ═══════════════════════════════════
-async function loadAndRenderAdmin() {
-  const list = document.getElementById('adm-list');
-  const countEl = document.getElementById('adm-count');
-  list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+// ═══════════════════════════════════════════════════════════
+// ADMIN VIEW
+// ═══════════════════════════════════════════════════════════
+async function loadAdmin(){
   try {
-    const assignments = await api('GET', '/api/assignments');
-    renderAdmin(assignments);
-  } catch(e) {
-    list.innerHTML = `<div class="empty-state"><div class="e-ico">⚠️</div><h3>Could not load assignments</h3><p>${escHtml(e.message)}</p></div>`;
-    countEl.textContent = 'Error loading';
+    const list = await fetchAssignments();
+    renderAdmin(list);
+  } catch(e){
+    document.getElementById('adm-list').innerHTML=`<div class="empty-state"><div class="e-ico">⚠️</div><h3>Error</h3><p>${escHtml(e.message)}</p></div>`;
   }
 }
 
-function renderAdmin(assignments) {
-  const list = document.getElementById('adm-list');
+function renderAdmin(assignments){
+  const list    = document.getElementById('adm-list');
   const countEl = document.getElementById('adm-count');
-  const total = assignments.length;
+  const total   = assignments.length;
   countEl.textContent = total===0 ? 'No assignments yet' : `${total} assignment${total===1?'':'s'} posted`;
-
-  if(total === 0){
-    list.innerHTML = `<div class="empty-state"><div class="e-ico">📭</div><h3>No assignments yet</h3><p>Click "New Assignment" to create your first one.<br>Students will see it immediately after posting.</p></div>`;
+  if(total===0){
+    list.innerHTML=`<div class="empty-state"><div class="e-ico">📭</div><h3>No assignments yet</h3><p>Click "New Assignment" to create your first one.<br>Students will see it immediately after posting.</p></div>`;
     return;
   }
-  list.innerHTML = assignments.map(a => {
-    const st = dueStatus(a.due);
+  list.innerHTML=assignments.map(a=>{
+    const st=dueStatus(a.due);
     return `
     <div class="asgn-item">
       <div class="asgn-item-head">
@@ -584,47 +512,38 @@ function renderAdmin(assignments) {
   }).join('');
 }
 
-// ═══════════════════════════════════
-// RENDER STUDENT LIST
-// ═══════════════════════════════════
-async function loadAndRenderStudent() {
-  const list = document.getElementById('stu-list');
-  const countEl = document.getElementById('stu-count');
-  list.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div>';
+// ═══════════════════════════════════════════════════════════
+// STUDENT VIEW
+// ═══════════════════════════════════════════════════════════
+async function loadStudent(){
   try {
-    const assignments = await api('GET', '/api/assignments');
-    renderStudent(assignments);
-  } catch(e) {
-    list.innerHTML = `<div class="empty-state"><div class="e-ico">⚠️</div><h3>Could not load assignments</h3><p>${escHtml(e.message)}</p></div>`;
-    countEl.textContent = 'Error loading';
+    const list = await fetchAssignments();
+    renderStudent(list);
+  } catch(e){
+    document.getElementById('stu-list').innerHTML=`<div class="empty-state"><div class="e-ico">⚠️</div><h3>Error</h3><p>${escHtml(e.message)}</p></div>`;
   }
 }
 
-function renderStudent(assignments) {
-  const list = document.getElementById('stu-list');
+function renderStudent(assignments){
+  const list    = document.getElementById('stu-list');
   const countEl = document.getElementById('stu-count');
-  const total = assignments.length;
+  const total   = assignments.length;
   countEl.textContent = total===0 ? 'No assignments posted yet' : `${total} assignment${total===1?'':'s'} from your admin`;
-
-  if(total === 0){
-    list.innerHTML = `<div class="empty-state"><div class="e-ico">🎉</div><h3>All clear!</h3><p>No assignments have been posted yet.<br>Check back soon.</p></div>`;
+  if(total===0){
+    list.innerHTML=`<div class="empty-state"><div class="e-ico">🎉</div><h3>All clear!</h3><p>No assignments posted yet.<br>Check back soon.</p></div>`;
     return;
   }
-
-  const sorted = [...assignments].sort((a,b) => {
-    const order = {over:0,soon:1,ok:2};
-    const sa = dueStatus(a.due), sb = dueStatus(b.due);
-    if(order[sa] !== order[sb]) return order[sa] - order[sb];
-    return new Date(a.due) - new Date(b.due);
+  const sorted=[...assignments].sort((a,b)=>{
+    const order={over:0,soon:1,ok:2};
+    const sa=dueStatus(a.due),sb=dueStatus(b.due);
+    if(order[sa]!==order[sb]) return order[sa]-order[sb];
+    return new Date(a.due)-new Date(b.due);
   });
-
-  list.innerHTML = sorted.map(a => {
-    const st = dueStatus(a.due);
-    const statusClass = st==='over'?'sb-over':st==='soon'?'sb-soon':'sb-ok';
-    const borderColor = statusBarColor(st);
-    const hasPdf = !!a.pdfName;
+  list.innerHTML=sorted.map(a=>{
+    const st=dueStatus(a.due);
+    const statusClass=st==='over'?'sb-over':st==='soon'?'sb-soon':'sb-ok';
     return `
-    <div class="stu-card" style="border-left:4px solid ${borderColor}">
+    <div class="stu-card" style="border-left:4px solid ${statusBarColor(st)}">
       <div class="stu-card-inner">
         <div class="stu-card-top">
           <div class="stu-card-left">
@@ -636,67 +555,57 @@ function renderStudent(assignments) {
             <div class="due-date ${st}">${formatDate(a.due)}</div>
           </div>
         </div>
-        ${a.desc ? `<div class="stu-desc">${escHtml(a.desc)}</div>` : ''}
+        ${a.desc?`<div class="stu-desc">${escHtml(a.desc)}</div>`:''}
         <div class="stu-card-footer">
           <span class="status-badge ${statusClass}">${dueLabel(a.due)}</span>
-          ${hasPdf
-            ? `<a class="btn-download" href="${escHtml(a.pdfUrl)}" download="${escHtml(a.pdfName)}">
+          ${a.pdfName
+            ? `<a class="btn-download" href="${escHtml(a.pdfUrl)}" target="_blank" download="${escHtml(a.pdfName)}">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 Download Answer PDF
               </a>
               <span style="font-size:11px;color:var(--ink3)">${escHtml(a.pdfName)} · ${escHtml(a.pdfSize||'')}</span>`
-            : `<span class="no-pdf-note">No answer PDF attached for this assignment</span>`
-          }
+            : `<span class="no-pdf-note">No answer PDF attached yet</span>`}
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ═══════════════════════════════════
-// CREATE ASSIGNMENT FORM
-// ═══════════════════════════════════
-function openForm(){
-  document.getElementById('form-overlay').classList.add('open');
-  document.getElementById('f-title').focus();
-}
-function closeForm(){
-  document.getElementById('form-overlay').classList.remove('open');
-  resetForm();
-}
+// ═══════════════════════════════════════════════════════════
+// CREATE ASSIGNMENT
+// ═══════════════════════════════════════════════════════════
+function openForm(){ document.getElementById('form-overlay').classList.add('open'); document.getElementById('f-title').focus(); }
+function closeForm(){ document.getElementById('form-overlay').classList.remove('open'); resetForm(); }
 function resetForm(){
-  ['f-title','f-course','f-desc','f-due'].forEach(id => document.getElementById(id).value = '');
+  ['f-title','f-course','f-desc','f-due'].forEach(id=>document.getElementById(id).value='');
   removeFile();
-  document.getElementById('btn-submit').disabled = true;
-  document.getElementById('btn-submit').textContent = 'Post Assignment';
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true; btn.textContent='Post Assignment';
 }
 function validateForm(){
-  const t = document.getElementById('f-title').value.trim();
-  const c = document.getElementById('f-course').value.trim();
-  const d = document.getElementById('f-due').value;
-  document.getElementById('btn-submit').disabled = !(t && c && d);
+  const t=document.getElementById('f-title').value.trim();
+  const c=document.getElementById('f-course').value.trim();
+  const d=document.getElementById('f-due').value;
+  document.getElementById('btn-submit').disabled=!(t&&c&&d);
 }
 
 function handleFile(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  if(file.type !== 'application/pdf' && !file.name.endsWith('.pdf')){
-    showToast('⚠️ Please upload a PDF file only'); e.target.value=''; return;
-  }
-  if(file.size > 20*1024*1024){
-    showToast('⚠️ File too large — max 20 MB'); e.target.value=''; return;
-  }
-  pendingFile = file;
-  document.getElementById('upload-name').textContent = file.name;
-  document.getElementById('upload-size').textContent = formatBytes(file.size);
+  const file=e.target.files[0]; if(!file) return;
+  if(file.type!=='application/pdf'&&!file.name.endsWith('.pdf')){ showToast('⚠️ PDF files only'); e.target.value=''; return; }
+  if(file.size>20*1024*1024){ showToast('⚠️ Max 20 MB'); e.target.value=''; return; }
+  pendingFile=file;
+  document.getElementById('upload-name').textContent=file.name;
+  document.getElementById('upload-size-txt').textContent=formatBytes(file.size);
   document.getElementById('upload-preview').classList.add('visible');
-  document.getElementById('upload-zone').style.display = 'none';
+  document.getElementById('upload-zone').style.display='none';
 }
 function removeFile(){
-  pendingFile = null;
-  document.getElementById('f-pdf').value = '';
+  pendingFile=null;
+  document.getElementById('f-pdf').value='';
   document.getElementById('upload-preview').classList.remove('visible');
-  document.getElementById('upload-zone').style.display = '';
+  document.getElementById('upload-zone').style.display='';
+  document.getElementById('upload-progress').classList.remove('visible');
+  document.getElementById('upload-progress-bar').style.width='0%';
 }
 
 async function createAssignment(){
@@ -704,61 +613,86 @@ async function createAssignment(){
   const course = document.getElementById('f-course').value.trim();
   const desc   = document.getElementById('f-desc').value.trim();
   const due    = document.getElementById('f-due').value;
-  if(!title || !course || !due) return;
+  if(!title||!course||!due) return;
 
-  const btn = document.getElementById('btn-submit');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span>Posting…';
-
-  const fd = new FormData();
-  fd.append('title', title);
-  fd.append('course', course);
-  fd.append('desc', desc);
-  fd.append('due', due);
-  if(pendingFile) fd.append('pdf', pendingFile);
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin"></span>Posting…';
 
   try {
-    await api('POST', '/api/assignments', fd);
+    const formData = new FormData();
+    formData.append('title',  title);
+    formData.append('course', course);
+    formData.append('desc',   desc);
+    formData.append('due',    due);
+    if(pendingFile) formData.append('pdf', pendingFile);
+
+    // Simulate progress bar during upload
+    const prog = document.getElementById('upload-progress');
+    const bar  = document.getElementById('upload-progress-bar');
+    if(pendingFile){ prog.classList.add('visible'); bar.style.width='30%'; }
+
+    const res = await fetch('/api/assignments', {
+      method: 'POST',
+      body:   formData
+    });
+
+    if(pendingFile){ bar.style.width='100%'; }
+
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Failed to post assignment');
+
     closeForm();
-    showToast('✅ Assignment posted — students can now see it');
-    loadAndRenderAdmin();
-  } catch(e) {
+    showToast('✅ Assignment posted — students can see it now');
+    loadAdmin();
+  } catch(e){
     showToast('❌ ' + (e.message || 'Failed to post assignment'));
-    btn.disabled = false;
-    btn.textContent = 'Post Assignment';
+    btn.disabled=false;
+    btn.textContent='Post Assignment';
+    document.getElementById('upload-progress').classList.remove('visible');
+    document.getElementById('upload-progress-bar').style.width='0%';
   }
 }
 
-// ═══════════════════════════════════
-// DELETE
-// ═══════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// DELETE ASSIGNMENT
+// ═══════════════════════════════════════════════════════════
 async function deleteAssignment(id){
   if(!confirm('Delete this assignment? Students will no longer see it.')) return;
   try {
-    await api('DELETE', `/api/assignments/${id}`);
+    const res = await fetch(`/api/assignments/${id}`, {method:'DELETE'});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Delete failed');
     showToast('🗑 Assignment deleted');
-    loadAndRenderAdmin();
-  } catch(e) {
-    showToast('❌ ' + (e.message || 'Delete failed'));
+    loadAdmin();
+  } catch(e){
+    showToast('❌ ' + (e.message||'Delete failed'));
   }
 }
 
-// ═══════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // DRAG & DROP
-// ═══════════════════════════════════
-const uz = document.getElementById('upload-zone');
-uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag'); });
-uz.addEventListener('dragleave', () => uz.classList.remove('drag'));
-uz.addEventListener('drop', e => {
-  e.preventDefault(); uz.classList.remove('drag');
-  const f = e.dataTransfer.files[0];
-  if(f){ document.getElementById('f-pdf').files = e.dataTransfer.files; handleFile({target:{files:[f]}}); }
+// ═══════════════════════════════════════════════════════════
+const uz=document.getElementById('upload-zone');
+uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag');});
+uz.addEventListener('dragleave',()=>uz.classList.remove('drag'));
+uz.addEventListener('drop',e=>{
+  e.preventDefault();uz.classList.remove('drag');
+  const f=e.dataTransfer.files[0];
+  if(f){document.getElementById('f-pdf').files=e.dataTransfer.files;handleFile({target:{files:[f]}});}
 });
 
-// ═══════════════════════════════════
-// Check if already logged in on load
-// ═══════════════════════════════════
-checkSession();
+// ═══════════════════════════════════════════════════════════
+// SESSION CHECK on page load
+// ═══════════════════════════════════════════════════════════
+(async function checkSession(){
+  try {
+    const res  = await fetch('/api/me');
+    const data = await res.json();
+    // If already logged in and somehow on the login screen, stay on landing
+    // (session is restored automatically by cookie on next admin-portal visit)
+  } catch{}
+})();
 </script>
 </body>
 </html>
