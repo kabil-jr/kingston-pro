@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function AdminLogin({ setScreen, showToast }) {
   const [username, setUsername] = useState('');
@@ -6,16 +8,20 @@ export default function AdminLogin({ setScreen, showToast }) {
   const [error, setError] = useState(false);
 
   const doLogin = async () => {
-    // Basic credential check for frontend-only auth
-    if (username === 'admin' && password === 'kec123') {
+    try {
+      // Firebase Auth requires email, so we map the 'admin' username to admin@kec.com
+      const email = username === 'admin' ? 'admin@kec.com' : username;
+      await signInWithEmailAndPassword(auth, email, password);
+      
       sessionStorage.setItem('isAdmin', 'true');
-      sessionStorage.setItem('adminUser', 'admin');
       setError(false);
       setScreen('admin-portal');
-    } else {
+      showToast('Welcome back, Admin');
+    } catch (e) {
+      console.error(e);
       setError(true);
       setPassword('');
-      showToast('⚠️ Incorrect username or password');
+      showToast('⚠️ Login failed: ' + e.message);
     }
   };
 
