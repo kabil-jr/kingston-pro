@@ -14,7 +14,7 @@ const IS_VERCEL    = !!process.env.VERCEL;
 const TMP_DIR      = IS_VERCEL ? '/tmp' : __dirname;
 const DATA_FILE    = path.join(TMP_DIR,  'data', 'assignments.json');
 const UPLOADS_DIR  = path.join(TMP_DIR,  'uploads');
-const PUBLIC_DIR   = path.join(__dirname, 'public');
+const DIST_DIR     = path.join(__dirname, 'frontend', 'dist');
 
 // Ensure writable directories exist
 [path.join(TMP_DIR, 'data'), UPLOADS_DIR].forEach(d => {
@@ -87,7 +87,7 @@ app.use(session({
 app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Serve the frontend
-app.use(express.static(PUBLIC_DIR));
+app.use(express.static(DIST_DIR));
 
 // ─── Auth guard ───────────────────────────────────────────────────────────────
 function requireAdmin(req, res, next) {
@@ -196,7 +196,7 @@ app.delete('/api/assignments/:id', requireAdmin, (req, res) => {
 
 // ─── SPA fallback ────────────────────────────────────────────────────────────
 app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+  res.sendFile(path.join(DIST_DIR, 'index.html'));
 });
 
 // ─── Error handler ────────────────────────────────────────────────────────────
